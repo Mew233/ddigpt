@@ -1,0 +1,212 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis.css" type="text/css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.16.1/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 100%;
+            height: 450px;
+            background-color: #222222;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 100%;
+            height: 450px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"font": {"color": "white"}, "id": "Metformin", "label": "Metformin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Phenelzine", "label": "Phenelzine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Primidone", "label": "Primidone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Lopinavir", "label": "Lopinavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Triamcinolone", "label": "Triamcinolone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Erythromycin", "label": "Erythromycin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Lipoic acid", "label": "Lipoic acid", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Fludrocortisone", "label": "Fludrocortisone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ranolazine", "label": "Ranolazine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Iloperidone", "label": "Iloperidone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Lamotrigine", "label": "Lamotrigine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Levonorgestrel", "label": "Levonorgestrel", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Bendroflumethiazide", "label": "Bendroflumethiazide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Leuprolide", "label": "Leuprolide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Saquinavir", "label": "Saquinavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Mestranol", "label": "Mestranol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Articaine", "label": "Articaine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Tacrolimus", "label": "Tacrolimus", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Sparfloxacin", "label": "Sparfloxacin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Dexamethasone", "label": "Dexamethasone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Goserelin", "label": "Goserelin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Tolazamide", "label": "Tolazamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Norethisterone", "label": "Norethisterone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin degludec", "label": "Insulin degludec", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Chlorothiazide", "label": "Chlorothiazide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Mecasermin", "label": "Mecasermin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Glyburide", "label": "Glyburide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Nadolol", "label": "Nadolol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Paroxetine", "label": "Paroxetine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Dienogest", "label": "Dienogest", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Secobarbital", "label": "Secobarbital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Buserelin", "label": "Buserelin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Methazolamide", "label": "Methazolamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Salicylic acid", "label": "Salicylic acid", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Nateglinide", "label": "Nateglinide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Arsenic trioxide", "label": "Arsenic trioxide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Sunitinib", "label": "Sunitinib", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Aripiprazole", "label": "Aripiprazole", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Hexobarbital", "label": "Hexobarbital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Asenapine", "label": "Asenapine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ardeparin", "label": "Ardeparin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Sulfadiazine", "label": "Sulfadiazine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Glimepiride", "label": "Glimepiride", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Sulfisoxazole", "label": "Sulfisoxazole", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Trichlormethiazide", "label": "Trichlormethiazide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ioxilan", "label": "Ioxilan", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Darunavir", "label": "Darunavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ethoxzolamide", "label": "Ethoxzolamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Stanolone", "label": "Stanolone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Verapamil", "label": "Verapamil", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ethinylestradiol", "label": "Ethinylestradiol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Trimethoprim", "label": "Trimethoprim", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Butobarbital", "label": "Butobarbital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Progesterone", "label": "Progesterone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Indinavir", "label": "Indinavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Sulfamethoxazole", "label": "Sulfamethoxazole", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Paliperidone", "label": "Paliperidone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Diclofenamide", "label": "Diclofenamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Tipranavir", "label": "Tipranavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Dalfampridine", "label": "Dalfampridine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Triamterene", "label": "Triamterene", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Perindopril", "label": "Perindopril", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Prednisolone", "label": "Prednisolone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ethanol", "label": "Ethanol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ioversol", "label": "Ioversol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Chlorpropamide", "label": "Chlorpropamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Indapamide", "label": "Indapamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Danazol", "label": "Danazol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Methyclothiazide", "label": "Methyclothiazide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "St. John\u0027s Wort", "label": "St. John\u0027s Wort", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Pipotiazine", "label": "Pipotiazine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Iodipamide", "label": "Iodipamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Pegvisomant", "label": "Pegvisomant", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Fosamprenavir", "label": "Fosamprenavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Everolimus", "label": "Everolimus", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Methylprednisolone", "label": "Methylprednisolone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Sirolimus", "label": "Sirolimus", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Iodixanol", "label": "Iodixanol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Risperidone", "label": "Risperidone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Torasemide", "label": "Torasemide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin human", "label": "Insulin human", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Aldesleukin", "label": "Aldesleukin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Octreotide", "label": "Octreotide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Dofetilide", "label": "Dofetilide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Cortisone acetate", "label": "Cortisone acetate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Hydrochlorothiazide", "label": "Hydrochlorothiazide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Nilotinib", "label": "Nilotinib", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Clozapine", "label": "Clozapine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Dolutegravir", "label": "Dolutegravir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Iohexol", "label": "Iohexol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Lanreotide", "label": "Lanreotide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Gliclazide", "label": "Gliclazide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Butabarbital", "label": "Butabarbital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin glargine", "label": "Insulin glargine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Corticotropin", "label": "Corticotropin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Methohexital", "label": "Methohexital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Testosterone", "label": "Testosterone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Valsartan", "label": "Valsartan", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Nicorandil", "label": "Nicorandil", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Methotrimeprazine", "label": "Methotrimeprazine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Quetiapine", "label": "Quetiapine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ceritinib", "label": "Ceritinib", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Iopromide", "label": "Iopromide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Triptorelin", "label": "Triptorelin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Glycopyrronium", "label": "Glycopyrronium", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Tolbutamide", "label": "Tolbutamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Estrone sulfate", "label": "Estrone sulfate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Cyproterone acetate", "label": "Cyproterone acetate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Disopyramide", "label": "Disopyramide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Heptabarbital", "label": "Heptabarbital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Niacin", "label": "Niacin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Histrelin", "label": "Histrelin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Oxandrolone", "label": "Oxandrolone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Iopamidol", "label": "Iopamidol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Epinephrine", "label": "Epinephrine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Prednisone", "label": "Prednisone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Temsirolimus", "label": "Temsirolimus", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Aspirin", "label": "Aspirin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Furosemide", "label": "Furosemide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ethynodiol diacetate", "label": "Ethynodiol diacetate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Hydrocortisone", "label": "Hydrocortisone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Glipizide", "label": "Glipizide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Atazanavir", "label": "Atazanavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Repaglinide", "label": "Repaglinide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Etonogestrel", "label": "Etonogestrel", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Desogestrel", "label": "Desogestrel", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ritonavir", "label": "Ritonavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Lurasidone", "label": "Lurasidone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Cephalexin", "label": "Cephalexin", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin detemir", "label": "Insulin detemir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Quinine", "label": "Quinine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Dabrafenib", "label": "Dabrafenib", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Etacrynic acid", "label": "Etacrynic acid", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Hydroxyprogesterone caproate", "label": "Hydroxyprogesterone caproate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Topiramate", "label": "Topiramate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Olanzapine", "label": "Olanzapine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin glulisine", "label": "Insulin glulisine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Bumetanide", "label": "Bumetanide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Megestrol acetate", "label": "Megestrol acetate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Zonisamide", "label": "Zonisamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Pentobarbital", "label": "Pentobarbital", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Cimetidine", "label": "Cimetidine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Mifepristone", "label": "Mifepristone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Tranylcypromine", "label": "Tranylcypromine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Pasireotide", "label": "Pasireotide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin aspart", "label": "Insulin aspart", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Ziprasidone", "label": "Ziprasidone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Betamethasone", "label": "Betamethasone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Brexpiprazole", "label": "Brexpiprazole", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Bupropion", "label": "Bupropion", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Metolazone", "label": "Metolazone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Vandetanib", "label": "Vandetanib", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Norgestimate", "label": "Norgestimate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Diazoxide", "label": "Diazoxide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Pentamidine", "label": "Pentamidine", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Acetazolamide", "label": "Acetazolamide", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Vorinostat", "label": "Vorinostat", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Insulin lispro", "label": "Insulin lispro", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Medroxyprogesterone acetate", "label": "Medroxyprogesterone acetate", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Drospirenone", "label": "Drospirenone", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Nelfinavir", "label": "Nelfinavir", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Estradiol", "label": "Estradiol", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Trospium", "label": "Trospium", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "id": "Chlorthalidone", "label": "Chlorthalidone", "shape": "dot", "size": 10}]);
+        edges = new vis.DataSet([{"from": "Metformin", "to": "Phenelzine", "weight": 1}, {"from": "Metformin", "to": "Primidone", "weight": 1}, {"from": "Metformin", "to": "Lopinavir", "weight": 1}, {"from": "Metformin", "to": "Triamcinolone", "weight": 1}, {"from": "Metformin", "to": "Erythromycin", "weight": 1}, {"from": "Metformin", "to": "Lipoic acid", "weight": 1}, {"from": "Metformin", "to": "Fludrocortisone", "weight": 1}, {"from": "Metformin", "to": "Ranolazine", "weight": 1}, {"from": "Metformin", "to": "Iloperidone", "weight": 1}, {"from": "Metformin", "to": "Lamotrigine", "weight": 1}, {"from": "Metformin", "to": "Levonorgestrel", "weight": 1}, {"from": "Metformin", "to": "Bendroflumethiazide", "weight": 1}, {"from": "Metformin", "to": "Leuprolide", "weight": 1}, {"from": "Metformin", "to": "Saquinavir", "weight": 1}, {"from": "Metformin", "to": "Mestranol", "weight": 1}, {"from": "Metformin", "to": "Articaine", "weight": 1}, {"from": "Metformin", "to": "Tacrolimus", "weight": 1}, {"from": "Metformin", "to": "Sparfloxacin", "weight": 1}, {"from": "Metformin", "to": "Dexamethasone", "weight": 1}, {"from": "Metformin", "to": "Goserelin", "weight": 1}, {"from": "Metformin", "to": "Tolazamide", "weight": 1}, {"from": "Metformin", "to": "Norethisterone", "weight": 1}, {"from": "Metformin", "to": "Insulin degludec", "weight": 1}, {"from": "Metformin", "to": "Chlorothiazide", "weight": 1}, {"from": "Metformin", "to": "Mecasermin", "weight": 1}, {"from": "Metformin", "to": "Glyburide", "weight": 1}, {"from": "Metformin", "to": "Nadolol", "weight": 1}, {"from": "Metformin", "to": "Paroxetine", "weight": 1}, {"from": "Metformin", "to": "Dienogest", "weight": 1}, {"from": "Metformin", "to": "Secobarbital", "weight": 1}, {"from": "Metformin", "to": "Buserelin", "weight": 1}, {"from": "Metformin", "to": "Methazolamide", "weight": 1}, {"from": "Metformin", "to": "Salicylic acid", "weight": 1}, {"from": "Metformin", "to": "Nateglinide", "weight": 1}, {"from": "Metformin", "to": "Arsenic trioxide", "weight": 1}, {"from": "Metformin", "to": "Sunitinib", "weight": 1}, {"from": "Metformin", "to": "Aripiprazole", "weight": 1}, {"from": "Metformin", "to": "Hexobarbital", "weight": 1}, {"from": "Metformin", "to": "Asenapine", "weight": 1}, {"from": "Metformin", "to": "Ardeparin", "weight": 1}, {"from": "Metformin", "to": "Sulfadiazine", "weight": 1}, {"from": "Metformin", "to": "Glimepiride", "weight": 1}, {"from": "Metformin", "to": "Sulfisoxazole", "weight": 1}, {"from": "Metformin", "to": "Trichlormethiazide", "weight": 1}, {"from": "Metformin", "to": "Ioxilan", "weight": 1}, {"from": "Metformin", "to": "Darunavir", "weight": 1}, {"from": "Metformin", "to": "Ethoxzolamide", "weight": 1}, {"from": "Metformin", "to": "Stanolone", "weight": 1}, {"from": "Metformin", "to": "Verapamil", "weight": 1}, {"from": "Metformin", "to": "Ethinylestradiol", "weight": 1}, {"from": "Metformin", "to": "Trimethoprim", "weight": 1}, {"from": "Metformin", "to": "Butobarbital", "weight": 1}, {"from": "Metformin", "to": "Progesterone", "weight": 1}, {"from": "Metformin", "to": "Indinavir", "weight": 1}, {"from": "Metformin", "to": "Sulfamethoxazole", "weight": 1}, {"from": "Metformin", "to": "Paliperidone", "weight": 1}, {"from": "Metformin", "to": "Diclofenamide", "weight": 1}, {"from": "Metformin", "to": "Tipranavir", "weight": 1}, {"from": "Metformin", "to": "Dalfampridine", "weight": 1}, {"from": "Metformin", "to": "Triamterene", "weight": 1}, {"from": "Metformin", "to": "Perindopril", "weight": 1}, {"from": "Metformin", "to": "Prednisolone", "weight": 1}, {"from": "Metformin", "to": "Ethanol", "weight": 1}, {"from": "Metformin", "to": "Ioversol", "weight": 1}, {"from": "Metformin", "to": "Chlorpropamide", "weight": 1}, {"from": "Metformin", "to": "Indapamide", "weight": 1}, {"from": "Metformin", "to": "Danazol", "weight": 1}, {"from": "Metformin", "to": "Methyclothiazide", "weight": 1}, {"from": "Metformin", "to": "St. John\u0027s Wort", "weight": 1}, {"from": "Metformin", "to": "Pipotiazine", "weight": 1}, {"from": "Metformin", "to": "Iodipamide", "weight": 1}, {"from": "Metformin", "to": "Pegvisomant", "weight": 1}, {"from": "Metformin", "to": "Fosamprenavir", "weight": 1}, {"from": "Metformin", "to": "Everolimus", "weight": 1}, {"from": "Metformin", "to": "Methylprednisolone", "weight": 1}, {"from": "Metformin", "to": "Sirolimus", "weight": 1}, {"from": "Metformin", "to": "Iodixanol", "weight": 1}, {"from": "Metformin", "to": "Risperidone", "weight": 1}, {"from": "Metformin", "to": "Torasemide", "weight": 1}, {"from": "Metformin", "to": "Insulin human", "weight": 1}, {"from": "Metformin", "to": "Aldesleukin", "weight": 1}, {"from": "Metformin", "to": "Octreotide", "weight": 1}, {"from": "Metformin", "to": "Dofetilide", "weight": 1}, {"from": "Metformin", "to": "Cortisone acetate", "weight": 1}, {"from": "Metformin", "to": "Hydrochlorothiazide", "weight": 1}, {"from": "Metformin", "to": "Nilotinib", "weight": 1}, {"from": "Metformin", "to": "Clozapine", "weight": 1}, {"from": "Metformin", "to": "Dolutegravir", "weight": 1}, {"from": "Metformin", "to": "Iohexol", "weight": 1}, {"from": "Metformin", "to": "Lanreotide", "weight": 1}, {"from": "Metformin", "to": "Gliclazide", "weight": 1}, {"from": "Metformin", "to": "Butabarbital", "weight": 1}, {"from": "Metformin", "to": "Insulin glargine", "weight": 1}, {"from": "Metformin", "to": "Corticotropin", "weight": 1}, {"from": "Metformin", "to": "Methohexital", "weight": 1}, {"from": "Metformin", "to": "Testosterone", "weight": 1}, {"from": "Metformin", "to": "Valsartan", "weight": 1}, {"from": "Metformin", "to": "Nicorandil", "weight": 1}, {"from": "Metformin", "to": "Methotrimeprazine", "weight": 1}, {"from": "Metformin", "to": "Quetiapine", "weight": 1}, {"from": "Metformin", "to": "Ceritinib", "weight": 1}, {"from": "Metformin", "to": "Iopromide", "weight": 1}, {"from": "Metformin", "to": "Triptorelin", "weight": 1}, {"from": "Metformin", "to": "Glycopyrronium", "weight": 1}, {"from": "Metformin", "to": "Tolbutamide", "weight": 1}, {"from": "Metformin", "to": "Estrone sulfate", "weight": 1}, {"from": "Metformin", "to": "Cyproterone acetate", "weight": 1}, {"from": "Metformin", "to": "Disopyramide", "weight": 1}, {"from": "Metformin", "to": "Heptabarbital", "weight": 1}, {"from": "Metformin", "to": "Niacin", "weight": 1}, {"from": "Metformin", "to": "Histrelin", "weight": 1}, {"from": "Metformin", "to": "Oxandrolone", "weight": 1}, {"from": "Metformin", "to": "Iopamidol", "weight": 1}, {"from": "Metformin", "to": "Epinephrine", "weight": 1}, {"from": "Metformin", "to": "Prednisone", "weight": 1}, {"from": "Metformin", "to": "Temsirolimus", "weight": 1}, {"from": "Metformin", "to": "Aspirin", "weight": 1}, {"from": "Metformin", "to": "Furosemide", "weight": 1}, {"from": "Metformin", "to": "Ethynodiol diacetate", "weight": 1}, {"from": "Metformin", "to": "Hydrocortisone", "weight": 1}, {"from": "Metformin", "to": "Glipizide", "weight": 1}, {"from": "Metformin", "to": "Atazanavir", "weight": 1}, {"from": "Metformin", "to": "Repaglinide", "weight": 1}, {"from": "Metformin", "to": "Etonogestrel", "weight": 1}, {"from": "Metformin", "to": "Desogestrel", "weight": 1}, {"from": "Metformin", "to": "Ritonavir", "weight": 1}, {"from": "Metformin", "to": "Lurasidone", "weight": 1}, {"from": "Metformin", "to": "Cephalexin", "weight": 1}, {"from": "Metformin", "to": "Insulin detemir", "weight": 1}, {"from": "Metformin", "to": "Quinine", "weight": 1}, {"from": "Metformin", "to": "Dabrafenib", "weight": 1}, {"from": "Metformin", "to": "Etacrynic acid", "weight": 1}, {"from": "Metformin", "to": "Hydroxyprogesterone caproate", "weight": 1}, {"from": "Metformin", "to": "Topiramate", "weight": 1}, {"from": "Metformin", "to": "Olanzapine", "weight": 1}, {"from": "Metformin", "to": "Insulin glulisine", "weight": 1}, {"from": "Metformin", "to": "Bumetanide", "weight": 1}, {"from": "Metformin", "to": "Megestrol acetate", "weight": 1}, {"from": "Metformin", "to": "Zonisamide", "weight": 1}, {"from": "Metformin", "to": "Pentobarbital", "weight": 1}, {"from": "Metformin", "to": "Cimetidine", "weight": 1}, {"from": "Metformin", "to": "Mifepristone", "weight": 1}, {"from": "Metformin", "to": "Tranylcypromine", "weight": 1}, {"from": "Metformin", "to": "Pasireotide", "weight": 1}, {"from": "Metformin", "to": "Insulin aspart", "weight": 1}, {"from": "Metformin", "to": "Ziprasidone", "weight": 1}, {"from": "Metformin", "to": "Betamethasone", "weight": 1}, {"from": "Metformin", "to": "Brexpiprazole", "weight": 1}, {"from": "Metformin", "to": "Bupropion", "weight": 1}, {"from": "Metformin", "to": "Metolazone", "weight": 1}, {"from": "Metformin", "to": "Vandetanib", "weight": 1}, {"from": "Metformin", "to": "Norgestimate", "weight": 1}, {"from": "Metformin", "to": "Diazoxide", "weight": 1}, {"from": "Metformin", "to": "Pentamidine", "weight": 1}, {"from": "Metformin", "to": "Acetazolamide", "weight": 1}, {"from": "Metformin", "to": "Vorinostat", "weight": 1}, {"from": "Metformin", "to": "Insulin lispro", "weight": 1}, {"from": "Metformin", "to": "Medroxyprogesterone acetate", "weight": 1}, {"from": "Metformin", "to": "Drospirenone", "weight": 1}, {"from": "Metformin", "to": "Nelfinavir", "weight": 1}, {"from": "Metformin", "to": "Estradiol", "weight": 1}, {"from": "Metformin", "to": "Trospium", "weight": 1}, {"from": "Metformin", "to": "Chlorthalidone", "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": false,
+            "type": "continuous"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.15,
+            "damping": 0.96,
+            "nodeDistance": 420,
+            "springConstant": 0.15,
+            "springLength": 100
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
